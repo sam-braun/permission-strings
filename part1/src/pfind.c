@@ -7,11 +7,6 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-int display_usage() {
-	fprintf(stdout, "Usage: ./pfind -d <directory> -p <permissions string> [-h]\n");
-	return EXIT_SUCCESS;
-}
-
 int perm_check(char* perm_string) {
 	if (strlen(perm_string) != 9) {
 		fprintf(stderr, "Error: Permissions string '%s' is invalid.\n", perm_string);
@@ -45,32 +40,42 @@ int main(int argc, char **argv) {
 	int pflag = 0;
 	opterr = 0;
 	int c;
-	char* dir_name = "";
-	char* permission_string = "";
+	char* dir_name = NULL;
+	char* permission_string = NULL;
 
 	// Getopt - options -d, -p, -h
-	while ((c = getopt(argc, argv, "d:p:h")) != 1) {
+	while ((c = getopt(argc, argv, "d:p:h")) != -1) {
 		switch(c) {
 			case 'd':
+				fprintf(stdout, "enters case d\n");
 				dflag = 1;
-				strcpy(dir_name, optarg);
+				dir_name = optarg;
+				fprintf(stdout, "%s\n", dir_name);
 				break;
+				fprintf(stdout, "doesn't break after case 'd'\n");
 			case 'p':
+				fprintf(stdout, "reached case 'p'\n");
 				pflag = 1;
-				strcpy(permission_string, optarg);
+				permission_string =  optarg;
 				break;
 			case 'h':
-				display_usage();
+				fprintf(stdout, "enters case h\n");
+				fprintf(stdout, "Usage: ./pfind -d <directory> -p <permissions string> [-h]\n");
+				return EXIT_SUCCESS;
 			case '?':
 				fprintf(stderr, "Error: Unknown option '%c' received.\n", optopt);
 				return EXIT_FAILURE;
 			default:
+				fprintf(stdout, "reaches default case\n");
 				return EXIT_FAILURE;
 		}
 	}
 
+	fprintf(stdout, "before error check\n");
+
 	// Error handling
 	if (pflag == 0) {
+		fprintf(stdout, "reached pflag == 0\n");
 		fprintf(stderr, "Error: Required argument -p <permissions string> not found.\n");
 		return EXIT_FAILURE;
 	} else if (dflag == 0) {
