@@ -5,13 +5,14 @@
 #include <getopt.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/stat.h>
 
-void display_usage() {
+int display_usage() {
 	fprintf(stdout, "Usage: ./pfind -d <directory> -p <permissions string> [-h]\n");
 	return EXIT_SUCCESS;
 }
 
-void perm_check(char* perm_string) {
+int perm_check(char* perm_string) {
 	if (strlen(perm_string) != 9) {
 		fprintf(stderr, "Error: Permissions string '%s' is invalid.\n", perm_string);
 		return EXIT_FAILURE;
@@ -35,17 +36,17 @@ void perm_check(char* perm_string) {
                                 return EXIT_FAILURE;
                 }
 	}
+	return 0;
 }
 
 int main(int argc, char **argv) {
 
 	int dflag = 0;
 	int pflag = 0;
-	int hflag = 0;
 	opterr = 0;
 	int c;
-	char* dir_name;
-	char* permission_string;
+	char* dir_name = "";
+	char* permission_string = "";
 
 	// Getopt - options -d, -p, -h
 	while ((c = getopt(argc, argv, "d:p:h")) != 1) {
