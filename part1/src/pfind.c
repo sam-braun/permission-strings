@@ -43,7 +43,26 @@ int perm_match(char* legit, char* curr) {
 		curr++;
 	}
 	return 1;
-}	
+}
+
+char* get_perm_string(struct stat srcc) {
+	char[9] ps = "---------";
+	
+	(srcc.stmode & S_IRUSR) ? ps[0] = 'r' : ps[0] = '-';
+	(srcc.stmode & S_IWUSR) ? ps[0] = 'w' : ps[0] = '-';
+	(srcc.stmode & S_IXUSR) ? ps[0] = 'x' : ps[0] = '-';
+
+	(srcc.stmode & S_IRGRP) ? ps[0] = 'r' : ps[0] = '-';
+	(srcc.stmode & S_IWGRP) ? ps[0] = 'w' : ps[0] = '-';
+	(srcc.stmode & S_IXGRP) ? ps[0] = 'x' : ps[0] = '-';
+
+	(srcc.stmode & S_IROTH) ? ps[0] = 'r' : ps[0] = '-';
+	(srcc.stmode & S_IWOTH) ? ps[0] = 'w' : ps[0] = '-';
+	(srcc.stmode & S_IXOTH) ? ps[0] = 'x' : ps[0] = '-';
+
+	return ps;
+
+}
 
 int main(int argc, char **argv) {
 
