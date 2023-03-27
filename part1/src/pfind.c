@@ -34,6 +34,17 @@ int perm_check(char* perm_string) {
 	return 0;
 }
 
+int perm_match(char* legit, char* curr) {
+	for (int i = 0; i < 9; i++) {
+		if (*legit != *curr) {
+			return -1;
+		}
+		legit++;
+		curr++;
+	}
+	return 1;
+}	
+
 int main(int argc, char **argv) {
 
 	int dflag = 0;
