@@ -134,35 +134,27 @@ int main(int argc, char **argv) {
 	while ((c = getopt(argc, argv, "d:p:h")) != -1) {
 		switch(c) {
 			case 'd':
-				fprintf(stdout, "enters case d\n");
 				dflag = 1;
 				dir_name = optarg;
-				fprintf(stdout, "%s\n", dir_name);
 				break;
 				fprintf(stdout, "doesn't break after case 'd'\n");
 			case 'p':
-				fprintf(stdout, "reached case 'p'\n");
 				pflag = 1;
 				perm_string =  optarg;
 				break;
 			case 'h':
-				fprintf(stdout, "enters case h\n");
 				fprintf(stdout, "Usage: ./pfind -d <directory> -p <permissions string> [-h]\n");
 				return EXIT_SUCCESS;
 			case '?':
 				fprintf(stderr, "Error: Unknown option '-%c' received.\n", optopt);
 				return EXIT_FAILURE;
 			default:
-				fprintf(stdout, "reaches default case\n");
 				return EXIT_FAILURE;
 		}
 	}
 
-	fprintf(stdout, "before error check\n");
-
 	// Error handling
 	if (pflag == 0) {
-		fprintf(stdout, "reached pflag == 0\n");
 		fprintf(stderr, "Error: Required argument -p <permissions string> not found.\n");
 		return EXIT_FAILURE;
 	} else if (dflag == 0) {
