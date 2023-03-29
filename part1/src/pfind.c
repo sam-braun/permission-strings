@@ -60,63 +60,63 @@ char* permission_string(struct stat *statbuf) {
 void recursive_print(char *name, char *perm_string) {
 	// Recurse through directory	
 	char path[PATH_MAX + 1];
-    if (realpath(name, path) == NULL) {
-        fprintf(stderr, "Error: Cannot get full path of file '%s'. %s.\n",
-                name, strerror(errno));
-        exit(1);
-    }
-
-    DIR *dir;
-    if ((dir = opendir(path)) == NULL) {
-        fprintf(stderr, "Error: Cannot open directory '%s'. %s.\n",
-                path, strerror(errno));
-        exit(1);
-    }
-
-    size_t pathlen = strlen(path);
-    // Only the root folder '/' ends with a '/'.
-    // All paths typically end in the name of the file, as in /home/user.
-    if (strcmp(path, "/")) {
-        // If we don't have the root folder, append a '/'.
-        path[pathlen++] = '/';
-        path[pathlen] = '\0';
-    }
-
-    struct dirent *entry;
-    struct stat sb;
-    while ((entry = readdir(dir)) != NULL) {
-        // Skip . and ..
-        if (strcmp(entry->d_name, ".") == 0 ||
-            strcmp(entry->d_name, "..") == 0) {
-            continue;
-        }
-        // Add the current entry's name to the end of full_filename, following
-        // the trailing '/' and overwriting the '\0'.
-        strncpy(path + pathlen, entry->d_name, PATH_MAX - pathlen);
-        if (lstat(path, &sb) < 0) {
-            fprintf(stderr, "Error: Cannot stat file '%s'. %s.\n",
-                    path, strerror(errno));
-            continue;
-        }
-        /*
-	// Differentiate directories from other file types.
-        if (S_ISDIR(sb.st_mode)) {
-            printf("%s [directory]\n", path);
-        } else {
-            printf("%s\n", path);
-        }
-	*/
 	
-	fprintf(stdout, "Iterated perm string: %s\n", permission_string(&sb));
-
-	if (strcmp(perm_string, permission_string(&sb)) == 0) {
-		fprintf(stdout, "%s\n", path);
+	if (realpath(name, path) == NULL) {
+		fprintf(stderr, "Error: Cannot get full path of file '%s'. %s.\n", name, strerror(errno));
+		exit(1);
 	}
 
-	if (S_ISDIR(sb.st_mode)) {
-		recursive_print(path, perm_string);
+	DIR *dir;
+	if ((dir = opendir(path)) == NULL) {
+		fprintf(stderr, "Error: Cannot open directory '%s'. %s.\n", path, strerror(errno));
+		exit(1);
 	}
+
+	size_t pathlen = strlen(path);
+	// Only the root folder '/' ends with a '/'.
+	// All paths typically end in the name of the file, as in /home/user.
+	if (strcmp(path, "/")) {
+		// If we don't have the root folder, append a '/'.
+		path[pathlen++] = '/';
+		path[pathlen] = '\0';
 	}
+	
+	struct dirent *entry;
+	struct stat sb;
+	while ((entry = readdir(dir)) != NULL) {
+		// Skip . and ..
+		if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+			continue;
+		}
+
+		// Add the current entry's name to the end of full_filename, following
+		// // the trailing '/' and overwriting the '\0'.
+		strncpy(path + pathlen, entry->d_name, PATH_MAX - pathlen);
+		if (lstat(path, &sb) < 0) {
+			fprintf(stderr, "Error: Cannot stat file '%s'. %s.\n", path, strerror(errno));
+			continue;
+		}
+        
+		/*
+		// Differentiate directories from other file types.
+        	if (S_ISDIR(sb.st_mode)) {
+           		printf("%s [directory]\n", path);
+        	} else {
+           		printf("%s\n", path);
+        	}	
+		*/
+		
+		fprintf(stdout, "Iterated perm string: %s\n", permission_string(&sb));
+
+		if (strcmp(perm_string, permission_string(&sb)) == 0) {
+			fprintf(stdout, "%s\n", path);
+		}
+
+		if (S_ISDIR(sb.st_mode)) {
+			recursive_print(path, perm_string);
+		}
+	}
+	
 	closedir(dir);
 
 }
