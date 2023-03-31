@@ -41,20 +41,22 @@ int perm_check(char* perm_string) {
 }
 
 char* permission_string(struct stat *statbuf) {
-    char* perm_string;
-    if ((perm_string = malloc(11 * sizeof(char))) == NULL) {
-        fprintf(stderr, "Error: malloc failed. %s.\n",
-                strerror(errno));
-        exit(EXIT_FAILURE);
-    }
-    for (int i = 0; i < 9; i += 3) {
-        // Using the ternary operator for succinct code.
-        perm_string[i] = statbuf->st_mode & perms[i] ? 'r' : '-';
-        perm_string[i + 1] = statbuf->st_mode & perms[i + 1] ? 'w' : '-';
-        perm_string[i + 2] = statbuf->st_mode & perms[i + 2] ? 'x' : '-';
-    }
-    perm_string[9] = '\0';
-    return perm_string;
+	char* perm_string;
+	if ((perm_string = malloc(11 * sizeof(char))) == NULL) {
+		fprintf(stderr, "Error: malloc failed. %s.\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+	
+	for (int i = 0; i < 9; i += 3) {
+		// Using the ternary operator for succinct code.
+		perm_string[i] = statbuf->st_mode & perms[i] ? 'r' : '-';
+		perm_string[i + 1] = statbuf->st_mode & perms[i + 1] ? 'w' : '-';
+		perm_string[i + 2] = statbuf->st_mode & perms[i + 2] ? 'x' : '-';
+	}
+	
+	perm_string[9] = '\0';
+	
+	return perm_string;
 }
 
 void recursive_print(char *name, char *perm_string) {
