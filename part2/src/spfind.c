@@ -87,15 +87,20 @@ int main(int argc, char *argv[]) {
 	int pfind_to_sort[2], sort_to_parent[2];
 	if (pipe(pfind_to_sort) == -1) {
 		fprintf(stderr, "Error: pipe failed. %s.\n", strerror(errno));
+		return EXIT_FAILURE;
 	}
 	if (pipe(sort_to_parent) == -1) {
 		fprintf(stderr, "Error: pipe failed. %s.\n", strerror(errno));
+		return EXIT_FAILURE;
+
 	}
 
 	pid_t pid[2];
 	if ((pid[0] = fork()) == -1) {
 		// error forking
 		fprintf(stderr, "Error: fork failed. %s.\n", strerror(errno));
+		return EXIT_FAILURE;
+
 	} else {
 		// in pfind process
 		close(pfind_to_sort[0]);
@@ -106,13 +111,15 @@ int main(int argc, char *argv[]) {
 		close(sort_to_parent[0]);
 		close(sort_to_parent[1]);
 
-		if (execlp("pfind", "pfind", dir_name, perm_string, NULL) == -1) {
+		if (execlp("pfind", "pfind", "-d", "dir_name", "-p", "perm_string", NULL) == -1) {
 			fprintf(stderr, "Error: pfind failed.");
+			return EXIT_FAILURE;
 		}
 	}
 	if ((pid[1] = fork()) == -1) {
 		// error forking
 		fprintf(stderr, "Error: fork failed. %s.\n", strerror(errno));
+		return EXIT_FAILURE;
 	} else {
 		// in sort process
 		close(pfind_to_sort[1]);
@@ -123,8 +130,9 @@ int main(int argc, char *argv[]) {
 		dup2(sort_to_parent[1], STDOUT_FILENO);
 		close(sort_to_parent[1]);
 		
-		if (execlp("sort", "sort", "-o stdout", NULL) == -1) {
+		if (execlp("sort", "sort", NULL) == -1) {	// "-o", "stdout"
 			fprintf(stderr, "Error: sort failed.");
+			return EXIT_FAILURE;
 		}
 	}
 
@@ -134,13 +142,13 @@ int main(int argc, char *argv[]) {
 	close(sort_to_parent[1]);
 	dup2(sort_to_parent[0], STDIN_FILENO);
 	close(sort_to_parent[0]);
-	/*
+	
 	char buf[MAX_STRLEN][MAX_ELEMENTS];
 	int i = 0;
-	while (read(stdin, buf) != 0) {
-		
+	while (read(STDIN_FILENO, &buf, 100) != 0) {
+		printf("%s", buf);
 	}
-	*/
+	
 
 }
 
