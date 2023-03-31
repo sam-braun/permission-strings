@@ -39,6 +39,7 @@ int perm_check(char* perm_string) {
 }
 
 int main(int argc, char *argv[]) {
+	/*
 	int dflag = 0;
 	int pflag = 0;
 	opterr = 0;
@@ -81,7 +82,12 @@ int main(int argc, char *argv[]) {
 	if (perm_check(perm_string) == -1) {
 		return EXIT_FAILURE;
 	}
+	*/
 	// Done testing
+	if (argc == 1) {
+		fprintf(stdout, "Usage: ./spfind -d <directory> -p <permissions string> [-h]\n");
+		return EXIT_SUCCESS;
+	}
 
 	// Set up pipes before forking
 	int pfind_to_sort[2], sort_to_parent[2];
@@ -94,6 +100,7 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 
 	}
+	printf("passed piping\n");
 
 	pid_t pid[2];
 	if ((pid[0] = fork()) == -1) {
@@ -101,7 +108,8 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error: fork failed. %s.\n", strerror(errno));
 		return EXIT_FAILURE;
 
-	} else {
+	} else if (pid[0] == 0) {
+		printf("passed first fork - in the child\n");
 		// in pfind process
 		close(pfind_to_sort[0]);
 		dup2(pfind_to_sort[1], STDOUT_FILENO);
@@ -111,8 +119,10 @@ int main(int argc, char *argv[]) {
 		close(sort_to_parent[0]);
 		close(sort_to_parent[1]);
 
-		if (execlp("pfind", "pfind", "-d", "dir_name", "-p", "perm_string", NULL) == -1) {
-			fprintf(stderr, "Error: pfind failed.");
+		fprintf(stderr, "above first execvp\n");
+
+		if (execvp("./pfind", argv) == -1) {      // formerly two "pfind"
+			fprintf(stderr, "Error: pfind failed.\n");
 			return EXIT_FAILURE;
 		}
 	}
@@ -120,7 +130,7 @@ int main(int argc, char *argv[]) {
 		// error forking
 		fprintf(stderr, "Error: fork failed. %s.\n", strerror(errno));
 		return EXIT_FAILURE;
-	} else {
+	} else if (pid[1] == 0) {
 		// in sort process
 		close(pfind_to_sort[1]);
 		dup2(pfind_to_sort[0], STDIN_FILENO);
@@ -143,12 +153,13 @@ int main(int argc, char *argv[]) {
 	dup2(sort_to_parent[0], STDIN_FILENO);
 	close(sort_to_parent[0]);
 	
-	char buf[MAX_STRLEN][MAX_ELEMENTS];
-	int i = 0;
-	while (read(STDIN_FILENO, &buf, 100) != 0) {
+	char buf[128];
+	while (read(STDIN_FILENO, &buf, sizeof(buf) - 1) != 0) {
 		printf("%s", buf);
 	}
-	
+
+	wait(NULL);
+	wait(NULL);
 
 }
 
