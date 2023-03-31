@@ -131,6 +131,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Error: fork failed. %s.\n", strerror(errno));
 		return EXIT_FAILURE;
 	} else if (pid[1] == 0) {
+		fprintf(stderr, "enters sort child\n");
 		// in sort process
 		close(pfind_to_sort[1]);
 		dup2(pfind_to_sort[0], STDIN_FILENO);
@@ -140,6 +141,8 @@ int main(int argc, char *argv[]) {
 		dup2(sort_to_parent[1], STDOUT_FILENO);
 		close(sort_to_parent[1]);
 		
+		fprintf(stderr, "before execlp of sort\n");
+
 		if (execlp("sort", "sort", NULL) == -1) {	// "-o", "stdout"
 			fprintf(stderr, "Error: sort failed.");
 			return EXIT_FAILURE;
@@ -153,6 +156,8 @@ int main(int argc, char *argv[]) {
 	dup2(sort_to_parent[0], STDIN_FILENO);
 	close(sort_to_parent[0]);
 	
+	fprintf(stderr, "enters parent\n");
+
 	char buf[128];
 	while (read(STDIN_FILENO, &buf, sizeof(buf) - 1) != 0) {
 		printf("%s", buf);
@@ -161,6 +166,7 @@ int main(int argc, char *argv[]) {
 	wait(NULL);
 	wait(NULL);
 
+	return EXIT_SUCCESS;
 }
 
 
