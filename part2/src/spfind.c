@@ -8,6 +8,9 @@
 #include <errno.h>
 #include <sys/wait.h>
 
+#define MAX_STRLEN	64
+#define MAX_ELEMENTS	1024
+
 int perm_check(char* perm_string) {
 	if (strlen(perm_string) != 9) {
 		fprintf(stderr, "Error: Permissions string '%s' is invalid.\n", perm_string);
@@ -103,7 +106,7 @@ int main(int argc, char *argv[]) {
 		close(sort_to_parent[0]);
 		close(sort_to_parent[1]);
 
-		if (execlp("pfind", "pfind", perm_string, NULL) == -1) {
+		if (execlp("pfind", "pfind", dir_name, perm_string, NULL) == -1) {
 			fprintf(stderr, "Error: pfind failed.");
 		}
 	}
@@ -120,13 +123,28 @@ int main(int argc, char *argv[]) {
 		dup2(sort_to_parent[1], STDOUT_FILENO);
 		close(sort_to_parent[1]);
 		
-		if (execlp("sort", "sort", NULL) == -1) {
+		if (execlp("sort", "sort", "-o stdout", NULL) == -1) {
 			fprintf(stderr, "Error: sort failed.");
 		}
 	}
 
 	// in parent now
-
-
+	close(pfind_to_sort[0]);
+	close(pfind_to_sort[1]);
+	close(sort_to_parent[1]);
+	dup2(sort_to_parent[0], STDIN_FILENO);
+	close(sort_to_parent[0]);
+	/*
+	char buf[MAX_STRLEN][MAX_ELEMENTS];
+	int i = 0;
+	while (read(stdin, buf) != 0) {
+		
+	}
+	*/
 
 }
+
+
+
+
+
