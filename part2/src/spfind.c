@@ -158,10 +158,28 @@ int main(int argc, char *argv[]) {
 	
 	fprintf(stderr, "enters parent\n");
 
-	char buf[128];
+	// Print directories from pipe
+	char buf[10];
+	int count = 0;
 	while (read(STDIN_FILENO, &buf, sizeof(buf) - 1) != 0) {
 		printf("%s", buf);
+		if (strchr(buf, '\n') != NULL) {
+			count++;
+		}
 	}
+	printf("\n");
+
+	// Print number of matches
+	/*
+	int count = 0;
+	fseek(STDIN_FILENO, 0, SEEK_SET);
+	for (char c = getc(STDIN_FILENO); c != EOF; c = getc(STDIN_FILENO)) {
+		if (c == '\n') {
+			count++;
+		}
+	}
+	*/
+	printf("Total matches: %d\n", count);
 
 	wait(NULL);
 	wait(NULL);
