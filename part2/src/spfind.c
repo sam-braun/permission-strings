@@ -123,7 +123,7 @@ int main(int argc, char *argv[]) {
 
 		if (execvp("./pfind", argv) == -1) {      // formerly two "pfind"
 			fprintf(stderr, "Error: pfind failed.\n");
-			return EXIT_FAILURE;
+			exit(EXIT_FAILURE);
 		}
 	}
 	if ((pid[1] = fork()) == -1) {
@@ -149,6 +149,7 @@ int main(int argc, char *argv[]) {
 		}
 	}
 
+
 	// in parent now
 	close(pfind_to_sort[0]);
 	close(pfind_to_sort[1]);
@@ -156,7 +157,20 @@ int main(int argc, char *argv[]) {
 	dup2(sort_to_parent[0], STDIN_FILENO);
 	close(sort_to_parent[0]);
 	
+	// in parent
+
 	fprintf(stderr, "enters parent\n");
+	
+	// need to exit failure in case any issue with spfind itself
+	int status；
+	
+	waitpid(pid[#1], &status, 0)；
+	if（status != //EXIT_SUCCESS) { return EXIT_FAILURE}
+
+	waitpid(pid[#2], &status, 0)；
+	// done after waitpid
+	if（status != //EXIT_SUCCESS) { return EXIT_FAILURE}
+
 
 	// Print directories from pipe
 	char buf[10];
@@ -169,6 +183,7 @@ int main(int argc, char *argv[]) {
 	}
 	printf("\n");
 
+
 	// Print number of matches
 	/*
 	int count = 0;
@@ -179,8 +194,10 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	*/
-	printf("Total matches: %d\n", count);
-
+/*	if (!startwith(buf, "Usage") {
+		printf("Total matches: %d\n", count);
+	}
+*/
 	wait(NULL);
 	wait(NULL);
 
