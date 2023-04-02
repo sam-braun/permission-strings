@@ -7,6 +7,7 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/wait.h>
+#include <sys/types.h>
 
 #define MAX_STRLEN	64
 #define MAX_ELEMENTS	1024
@@ -162,14 +163,20 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "enters parent\n");
 	
 	// need to exit failure in case any issue with spfind itself
-	int status；
-	
-	waitpid(pid[#1], &status, 0)；
-	if（status != //EXIT_SUCCESS) { return EXIT_FAILURE}
 
-	waitpid(pid[#2], &status, 0)；
+	pid_t wpid1, wpid2;
+	int status;
+	
+	wpid1 = waitpid(pid[0], &status, 0);
+	if（wpid1 == 1) {
+		return EXIT_FAILURE;
+	}
+
+	wpid2 = waitpid(pid[1], &status, 0);
 	// done after waitpid
-	if（status != //EXIT_SUCCESS) { return EXIT_FAILURE}
+	if（wpid2 == 1) {
+		return EXIT_FAILURE;
+	}
 
 
 	// Print directories from pipe
