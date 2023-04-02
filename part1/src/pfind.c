@@ -108,13 +108,16 @@ void recursive_print(char *name, char *perm_string) {
         	}	
 		*/
 		
-		if (strcmp(perm_string, permission_string(&sb)) == 0) {
+		char* test_perms = permission_string(&sb);
+		if (strcmp(perm_string, test_perms) == 0) {
 			fprintf(stdout, "%s\n", path);
 		}
 
 		if (S_ISDIR(sb.st_mode)) {
 			recursive_print(path, perm_string);
 		}
+		free(test_perms);
+
 	}
 	
 	closedir(dir);
