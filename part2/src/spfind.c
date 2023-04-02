@@ -8,6 +8,7 @@
 #include <sys/wait.h>
 #define MAX_STRLEN	64
 #define MAX_ELEMENTS	1024
+#define PATH_MAX	4096
 
 int main(int argc, char *argv[]) {
 
@@ -84,12 +85,17 @@ int main(int argc, char *argv[]) {
 	
 	
 	// Print directories from pipe
- 	char buf[10];
+ 	char buf[PATH_MAX + 1];
  	int count = 0;
- 	while (read(STDIN_FILENO, &buf, sizeof(buf) - 1) != 0) {
+	int last;
+	char* temp;
+ 	while ((last = read(STDIN_FILENO, &buf, sizeof(buf) - 1)) != 0) {
+		buf[last] = '\0';
 		printf("%s", buf);
- 		if (strchr(buf, '\n') != NULL) {
- 			count++;
+ 		temp = buf;
+		while ((temp = strchr(temp, '\n')) != NULL) {
+			count++;
+			temp++;
  		}
  	}
 
