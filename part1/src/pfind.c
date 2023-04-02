@@ -108,8 +108,6 @@ void recursive_print(char *name, char *perm_string) {
         	}	
 		*/
 		
-		fprintf(stdout, "Iterated perm string: %s\n", permission_string(&sb));
-
 		if (strcmp(perm_string, permission_string(&sb)) == 0) {
 			fprintf(stdout, "%s\n", path);
 		}
