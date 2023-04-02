@@ -40,50 +40,7 @@ int perm_check(char* perm_string) {
 }
 
 int main(int argc, char *argv[]) {
-	/*
-	int dflag = 0;
-	int pflag = 0;
-	opterr = 0;
-	int c;
-	char* dir_name = NULL;
-	char* perm_string = NULL;
 
-	// Getopt - options -d, -p, -h
-	while ((c = getopt(argc, argv, "d:p:h")) != -1) {
-		switch(c) {
-			case 'd':
-				dflag = 1;
-				dir_name = optarg;
-				break;
-				fprintf(stdout, "doesn't break after case 'd'\n");
-			case 'p':
-				pflag = 1;
-				perm_string =  optarg;
-				break;
-			case 'h':
-				fprintf(stdout, "Usage: ./spfind -d <directory> -p <permissions string> [-h]\n");
-				return EXIT_SUCCESS;
-			case '?':
-				fprintf(stderr, "Error: Unknown option '-%c' received.\n", optopt);
-				return EXIT_FAILURE;
-			default:
-				return EXIT_FAILURE;
-		}
-	}
-	
-	// Error handling
-	if (pflag == 0) {
-		fprintf(stderr, "Error: Required argument -p <permissions string> not found.\n");
-		return EXIT_FAILURE;
-	} else if (dflag == 0) {
-		fprintf(stderr, "Error: Required argument -d <directory> not found.\n");
-		return EXIT_FAILURE;
-	}
-
-	if (perm_check(perm_string) == -1) {
-		return EXIT_FAILURE;
-	}
-	*/
 	// Done testing
 	if (argc == 1) {
 		fprintf(stdout, "Usage: ./spfind -d <directory> -p <permissions string> [-h]\n");
@@ -168,16 +125,14 @@ int main(int argc, char *argv[]) {
 	int status;
 	
 	wpid1 = waitpid(pid[0], &status, 0);
-	if（wpid1 == 1) {
+	if (wpid1 == -1 || !WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS) {
 		return EXIT_FAILURE;
 	}
 
 	wpid2 = waitpid(pid[1], &status, 0);
-	// done after waitpid
-	if（wpid2 == 1) {
+	if (wpid2 == -1 || !WIFEXITED(status) || WEXITSTATUS(status) != EXIT_SUCCESS) {
 		return EXIT_FAILURE;
 	}
-
 
 	// Print directories from pipe
 	char buf[10];
@@ -190,21 +145,6 @@ int main(int argc, char *argv[]) {
 	}
 	printf("\n");
 
-
-	// Print number of matches
-	/*
-	int count = 0;
-	fseek(STDIN_FILENO, 0, SEEK_SET);
-	for (char c = getc(STDIN_FILENO); c != EOF; c = getc(STDIN_FILENO)) {
-		if (c == '\n') {
-			count++;
-		}
-	}
-	*/
-/*	if (!startwith(buf, "Usage") {
-		printf("Total matches: %d\n", count);
-	}
-*/
 	wait(NULL);
 	wait(NULL);
 
