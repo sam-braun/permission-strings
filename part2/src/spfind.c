@@ -83,7 +83,6 @@ int main(int argc, char *argv[]) {
 	}
 	
 	
-	
 	// Print directories from pipe
  	char buf[10];
  	int count = 0;
@@ -93,7 +92,6 @@ int main(int argc, char *argv[]) {
  			count++;
  		}
  	}
- 	printf("\n");
 
  	printf("Total matches: %d\n", count);
 
